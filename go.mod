@@ -1,4 +1,4 @@
-module github.com/blizzy78/copper-cli
+module github.com/blizzy78/coppercli
 
 go 1.13
 
