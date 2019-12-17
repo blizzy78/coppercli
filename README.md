@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/blizzy78/coppercli.svg?branch=master)](https://travis-ci.org/blizzy78/coppercli)
+
+
 coppercli
 =========
 
