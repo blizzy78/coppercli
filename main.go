@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"io"
 	"os"
@@ -20,6 +19,10 @@ type templateData struct {
 
 type dataFlags []templateData
 
+type argError struct {
+	msg string
+}
+
 func main() {
 	var dataFl dataFlags
 	flag.Var(&dataFl, "data", "template data (KEY=VALUE) (multiple)")
@@ -36,8 +39,8 @@ func main() {
 	}
 }
 
-func render(w io.Writer, r io.Reader, data map[string]interface{}) error {
-	l := template.LoaderFunc(func(name string) (io.Reader, error) {
+func render(w io.Writer, r io.ReadCloser, data map[string]interface{}) error {
+	l := template.LoaderFunc(func(name string) (io.ReadCloser, error) {
 		return r, nil
 	})
 
@@ -58,12 +61,16 @@ func render(w io.Writer, r io.Reader, data map[string]interface{}) error {
 func (f *dataFlags) Set(v string) error {
 	parts := strings.Split(v, "=")
 	if len(parts) != 2 {
-		return errors.New("expected KEY=VALUE")
+		return &argError{
+			msg: "expected KEY=VALUE",
+		}
 	}
 
 	key := strings.TrimSpace(parts[0])
-	if len(key) <= 0 {
-		return errors.New("expected KEY=VALUE")
+	if key == "" {
+		return &argError{
+			msg: "expected KEY=VALUE",
+		}
 	}
 
 	val := strings.TrimSpace(parts[1])
@@ -77,4 +84,8 @@ func (f *dataFlags) Set(v string) error {
 
 func (f *dataFlags) String() string {
 	return ""
+}
+
+func (e argError) Error() string {
+	return e.msg
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"strings"
 	"testing"
 
@@ -11,7 +12,7 @@ func TestRender(t *testing.T) {
 	is := is.New(t)
 
 	tmpl := `<% safe(len(s)) %>`
-	r := strings.NewReader(tmpl)
+	r := io.NopCloser(strings.NewReader(tmpl))
 	buf := strings.Builder{}
 
 	err := render(&buf, r, map[string]interface{}{
